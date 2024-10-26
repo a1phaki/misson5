@@ -324,5 +324,13 @@ btn.addEventListener('click',function(){
 
         // 渲染數據，更新顯示的內容
         renderData();
+        //清空表單
+        ticketName.value = '';
+        ticketImgUrl.value = '';
+        ticketRegion.value = '';
+        ticketDescription.value = '';
+        ticketNum.value = '';
+        ticketPrice.value = '';
+        ticketRate.value = '';
     }
 })
