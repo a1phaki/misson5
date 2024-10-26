@@ -232,6 +232,41 @@ regionSearch.addEventListener('change',function(){
 
 // 選取類別為 'addTicket-btn' 的按鈕元素
 const btn = document.querySelector('.addTicket-btn');
+// 獲取 ID 為 'ticketName' 的套票名稱輸入框元素
+const ticketName = document.querySelector('#ticketName');
+// 獲取 ID 為 'ticketImgUrl' 的圖片網址輸入框元素
+const ticketImgUrl = document.querySelector('#ticketImgUrl');
+// 獲取 ID 為 'ticketRegion' 的景點地區選擇框元素
+const ticketRegion = document.querySelector('#ticketRegion');
+// 獲取 ID 為 'ticketPrice' 的套票金額輸入框元素
+const ticketPrice = document.querySelector('#ticketPrice');
+// 獲取 ID 為 'ticketNum' 的套票組數輸入框元素
+const ticketNum = document.querySelector('#ticketNum');
+// 獲取 ID 為 'ticketRate' 的套票星級輸入框元素
+const ticketRate = document.querySelector('#ticketRate');
+// 獲取 ID 為 'ticketDescription' 的套票描述文本區域元素
+const ticketDescription = document.querySelector('#ticketDescription');
+
+// 監聽套票金額變更事件
+ticketPrice.addEventListener('change',function(){
+    //價格為0以上才能上傳，所以以此來確保公司不用倒貼錢
+    if(+ticketPrice.value < 0) ticketPrice.value = 0;
+})
+// 監聽套票組數變更事件
+ticketNum.addEventListener('change',function(){
+    //數量為一組以上才能上傳，所以以此來確保最少有一組
+    if(+ticketNum.value < 1) ticketNum.value = 1;
+})
+
+
+ticketRate.addEventListener('change',function(){
+    //因為鍵盤輸入會超過max,min的值，所以在超過max或不足min時，強制設為max,min
+    if(+ticketRate.value > +ticketRate.max){
+        ticketRate.value = ticketRate.max;
+    }else if(+ticketRate.value < +ticketRate.min){
+        ticketRate.value = ticketRate.min;
+    }
+})
 
 // 為 btn 按鈕添加click事件監聽器
 btn.addEventListener('click',function(){
@@ -243,6 +278,7 @@ btn.addEventListener('click',function(){
 
     // 選取所有具有 'alert-message' 類別下的 'p' 元素
     const alert = document.querySelectorAll('.alert-message p');
+    // 初始化空值標記為 false
     let empty = false;
     input.forEach((input,index) => {
         // 檢查輸入的值是否為空
@@ -256,24 +292,10 @@ btn.addEventListener('click',function(){
             // 清除警告訊息
             alert[index].innerHTML = '';
         }
-    })
+    });
 
+    // 檢查是否有空的輸入
     if(!empty){
-        // 獲取 ID 為 'ticketName' 的套票名稱輸入框元素
-        const ticketName = document.querySelector('#ticketName');
-        // 獲取 ID 為 'ticketImgUrl' 的圖片網址輸入框元素
-        const ticketImgUrl = document.querySelector('#ticketImgUrl');
-        // 獲取 ID 為 'ticketRegion' 的景點地區選擇框元素
-        const ticketRegion = document.querySelector('#ticketRegion');
-        // 獲取 ID 為 'ticketPrice' 的套票金額輸入框元素
-        const ticketPrice = document.querySelector('#ticketPrice');
-        // 獲取 ID 為 'ticketNum' 的套票組數輸入框元素
-        const ticketNum = document.querySelector('#ticketNum');
-        // 獲取 ID 為 'ticketRate' 的套票星級輸入框元素
-        const ticketRate = document.querySelector('#ticketRate');
-        // 獲取 ID 為 'ticketDescription' 的套票描述文本區域元素
-        const ticketDescription = document.querySelector('#ticketDescription');
-
         obj.id = data.length;
 
         //將套票名稱賦予到obj.name上
@@ -288,31 +310,19 @@ btn.addEventListener('click',function(){
         //將套票描述賦予到obj.description上
         obj.description = ticketDescription.value;
 
-        //數量為一組以上才能上傳，所以以此來確保最少有一組
-        //再將套票組數賦予到obj.price上
-        if(+ticketNum.value < 1) ticketNum.value = 1;
+        //將套票組數賦予到obj.price上
         obj.group = +ticketNum.value;
 
-        //價格為0以上才能上傳，所以以此來確保公司不用倒貼錢
-        //再將套票價格賦予到obj.price上
-        if(+ticketPrice.value < 0) ticketPrice.value = 0;
+        //將套票價格賦予到obj.price上
         obj.price = +ticketPrice.value;
 
-        //因為鍵盤輸入會超過max,min的值，所以在超過max或不足min時，強制設為max,min
-        //再將套票星級賦予到obj.rate上
-        if(+ticketRate.value > +ticketRate.max){
-            ticketRate.value = ticketRate.max;
-            obj.rate = +ticketRate.value;
-            console.log(obj.rate);
-        }else if(+ticketRate.value < +ticketRate.min){
-            ticketRate.value = ticketRate.min;
-            obj.rate = +ticketRate.value;
-            console.log(obj.rate);
-        }else{
-            obj.rate = +ticketRate.value;
-        }
-        console.log(obj);
+        //將套票星級賦予到obj.rate上
+        obj.rate = +ticketRate.value;
+        
+        // 將新的物件添加到數據陣列中
         data.push(obj);
+
+        // 渲染數據，更新顯示的內容
         renderData();
     }
 })
