@@ -311,6 +311,7 @@ btn.addEventListener('click',function(){
         }else{
             obj.rate = +ticketRate.value;
         }
+        console.log(obj);
         data.push(obj);
         renderData();
     }
