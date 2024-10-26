@@ -303,9 +303,11 @@ btn.addEventListener('click',function(){
         if(+ticketRate.value > +ticketRate.max){
             ticketRate.value = ticketRate.max;
             obj.rate = +ticketRate.value;
+            console.log(obj.rate);
         }else if(+ticketRate.value < +ticketRate.min){
             ticketRate.value = ticketRate.min;
             obj.rate = +ticketRate.value;
+            console.log(obj.rate);
         }else{
             obj.rate = +ticketRate.value;
         }
