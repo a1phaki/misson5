@@ -250,12 +250,12 @@ const ticketDescription = document.querySelector('#ticketDescription');
 // 監聽套票金額變更事件
 ticketPrice.addEventListener('change',function(){
     //價格為0以上才能上傳，所以以此來確保公司不用倒貼錢
-    if(+ticketPrice.value < 0 || isNaN(ticketPrice.value)) ticketPrice.value = 0;
+    if(+ticketPrice.value < 0 ) ticketPrice.value = 0;
 })
 // 監聽套票組數變更事件
 ticketNum.addEventListener('change',function(){
     //數量為一組以上才能上傳，所以以此來確保最少有一組
-    if(+ticketNum.value < 1 || isNaN(ticketNum.value)) ticketNum.value = 1;
+    if(+ticketNum.value < 1 ) ticketNum.value = 1;
 })
 
 
@@ -263,7 +263,7 @@ ticketRate.addEventListener('change',function(){
     //因為鍵盤輸入會超過max,min的值，所以在超過max或不足min時，強制設為max,min
     if(+ticketRate.value > +ticketRate.max){
         ticketRate.value = ticketRate.max;
-    }else if(+ticketRate.value < +ticketRate.min ||isNaN(ticketRate.value) ){
+    }else if(+ticketRate.value < +ticketRate.min){
         ticketRate.value = ticketRate.min;
     }
 })
