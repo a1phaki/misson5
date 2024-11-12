@@ -1,36 +1,14 @@
-let data = [
-    {
-      "id": 0,
-      "name": "肥宅心碎賞櫻3日",
-      "imgUrl": "https://images.unsplash.com/photo-1522383225653-ed111181a951?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1655&q=80",
-      "area": "高雄",
-      "description": "賞櫻花最佳去處。肥宅不得不去的超讚景點！",
-      "group": 87,
-      "price": 1400,
-      "rate": 10
-    },
-    {
-      "id": 1,
-      "name": "貓空纜車雙程票",
-      "imgUrl": "https://images.unsplash.com/photo-1501393152198-34b240415948?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1650&q=80",
-      "area": "台北",
-      "description": "乘坐以透明強化玻璃為地板的「貓纜之眼」水晶車廂，享受騰雲駕霧遨遊天際之感",
-      "group": 99,
-      "price": 240,
-      "rate": 2
-    },
-    {
-      "id": 2,
-      "name": "台中谷關溫泉會1日",
-      "imgUrl": "https://images.unsplash.com/photo-1535530992830-e25d07cfa780?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1650&q=80",
-      "area": "台中",
-      "description": "全館客房均提供谷關無色無味之優質碳酸原湯，並取用八仙山之山冷泉供蒞臨貴賓沐浴及飲水使用。",
-      "group": 20,
-      "price": 1765,
-      "rate": 7
-    }
-  ];
+let data = []
 
+axios.get('https://raw.githubusercontent.com/hexschool/js-training/main/travelApi.json')
+    .then(function(response){
+        data = response.data.data;
+        renderData(data);
+        chartGenerate(data);
+    })
+    .catch(function(error){
+        console.log(error);
+    })
 // 取得票券顯示區域的 DOM 元素
 const ticketCard = document.querySelector('.ticketCard-area');
 
@@ -43,12 +21,15 @@ const searchText = document.querySelector('#searchResult-text');
 // 用於儲存生成的 HTML 字串
 let str = '';
 
+const cantFind = document.querySelector('.cantFind-area');
+
+
 // 定義渲染資料的函數
-function renderData(){
+function renderData(dataArr){
     // 重置 str 變數，準備儲存新的 HTML 字串
     str = '';
     // 遍歷 data 陣列中的每一個項目
-    data.forEach(function(item){
+    dataArr.forEach(function(item){
          // 根據每一個項目的資料生成 HTML 列表項
         let content = `<li class="ticketCard">
                 <div class="ticketCard-img">
@@ -83,155 +64,37 @@ function renderData(){
     // 更新票券顯示區的 HTML，顯示生成的內容
     ticketCard.innerHTML = str; 
     // 更新搜尋結果的文字顯示，顯示總資料筆數
-    searchText.textContent = `本次搜尋共 ${data.length} 筆資料`;
+    searchText.textContent = `本次搜尋共 ${dataArr.length} 筆資料`;
 }
 
-renderData();
+
 
 // 為 regionSearch 下拉選單添加change事件監聽器
 regionSearch.addEventListener('change',function(){
     // 取得當前選取的地區值
-    let regionValue = regionSearch.value;
-    // 根據選取的地區值進行不同的處理
-    switch(regionValue){
-        case '台北':    
-            // 篩選出地區為「台北」的票券資料
-            let taipeiArea = data.filter(item => item.area === '台北');
-            // 更新搜尋結果的文字顯示
-            searchText.textContent = `本次搜尋共 ${taipeiArea.length} 筆資料`;
-            // 重置 str 變數，用來儲存生成的 HTML 字串
-            str = '';
-            // 將篩選後的資料轉換成 HTML 列表項
-            taipeiArea.forEach((function(item){
-                let content = `<li class="ticketCard">
-                <div class="ticketCard-img">
-                  <a href="#">
-                    <img src="${item.imgUrl}" alt="">
-                  </a>
-                  <div class="ticketCard-region">${item.area}</div>
-                  <div class="ticketCard-rank">${item.rate}</div>
-                </div>
-                <div class="ticketCard-content">
-                  <div>
-                    <h3>
-                      <a href="#" class="ticketCard-name">${item.name}</a>
-                    </h3>
-                    <p class="ticketCard-description">
-                      ${item.description}
-                    </p>
-                  </div>
-                  <div class="ticketCard-info">
-                    <p class="ticketCard-num">
-                      <span><i class="fas fa-exclamation-circle"></i></span>
-                      剩下最後 <span id="ticketCard-num"> ${item.group} </span> 組
-                    </p>
-                    <p class="ticketCard-price">
-                      TWD <span id="ticketCard-price">$${item.price}</span>
-                    </p>
-                  </div>
-                </div>
-              </li>`;
-                str += content;// 將生成的 HTML 字串加入 str
-            }));
-            // 更新票券顯示區的 HTML
-            ticketCard.innerHTML = str;
-            break;
-
-        case '台中':
-            // 篩選出地區為「台中」的票券資料
-            let taichungArea = data.filter(item => item.area === '台中');
-            // 更新搜尋結果的文字顯示
-            searchText.textContent = `本次搜尋共 ${taichungArea.length} 筆資料`;
-            // 重置 str 變數
-            str = '';
-            // 將篩選後的資料轉換成 HTML 列表項
-            taichungArea.forEach((function(item){
-                let content = `<li class="ticketCard">
-                <div class="ticketCard-img">
-                  <a href="#">
-                    <img src="${item.imgUrl}" alt="">
-                  </a>
-                  <div class="ticketCard-region">${item.area}</div>
-                  <div class="ticketCard-rank">${item.rate}</div>
-                </div>
-                <div class="ticketCard-content">
-                  <div>
-                    <h3>
-                      <a href="#" class="ticketCard-name">${item.name}</a>
-                    </h3>
-                    <p class="ticketCard-description">
-                      ${item.description}
-                    </p>
-                  </div>
-                  <div class="ticketCard-info">
-                    <p class="ticketCard-num">
-                      <span><i class="fas fa-exclamation-circle"></i></span>
-                      剩下最後 <span id="ticketCard-num"> ${item.group} </span> 組
-                    </p>
-                    <p class="ticketCard-price">
-                      TWD <span id="ticketCard-price">$${item.price}</span>
-                    </p>
-                  </div>
-                </div>
-              </li>`;
-                str += content;// 將生成的 HTML 字串加入 str
-            }));
-            // 更新票券顯示區的 HTML
-            ticketCard.innerHTML = str;
-            break;
-
-        case '高雄':
-            // 篩選出地區為「高雄」的票券資料
-            let kaohsiungArea = data.filter(item => item.area === '高雄');
-             // 更新搜尋結果的文字顯示
-            searchText.textContent = `本次搜尋共 ${kaohsiungArea.length} 筆資料`;
-            // 重置 str 變數
-            str = '';
-            // 將篩選後的資料轉換成 HTML 列表項
-            kaohsiungArea.forEach((function(item){
-                let content = `<li class="ticketCard">
-                <div class="ticketCard-img">
-                  <a href="#">
-                    <img src="${item.imgUrl}" alt="">
-                  </a>
-                  <div class="ticketCard-region">${item.area}</div>
-                  <div class="ticketCard-rank">${item.rate}</div>
-                </div>
-                <div class="ticketCard-content">
-                  <div>
-                    <h3>
-                      <a href="#" class="ticketCard-name">${item.name}</a>
-                    </h3>
-                    <p class="ticketCard-description">
-                      ${item.description}
-                    </p>
-                  </div>
-                  <div class="ticketCard-info">
-                    <p class="ticketCard-num">
-                      <span><i class="fas fa-exclamation-circle"></i></span>
-                      剩下最後 <span id="ticketCard-num"> ${item.group} </span> 組
-                    </p>
-                    <p class="ticketCard-price">
-                      TWD <span id="ticketCard-price">$${item.price}</span>
-                    </p>
-                  </div>
-                </div>
-              </li>`;
-                str += content;// 將生成的 HTML 字串加入 str
-            }));
-            // 更新票券顯示區的 HTML
-            ticketCard.innerHTML = str;
-            break;
-
-        case '全部':
-            // 若選擇「全部」，則重新渲染所有資料
-            renderData();
-            break;
+    let result = data.filter(item => {
+      if(item.area === regionSearch.value){
+        return true;
+      }else if(regionSearch.value === '全部' ){
+        return true;
+      }else{
+        return false;
+      }
+    })
+    console.log(result);
+    if(result.length === 0){
+      renderData(result);
+      cantFind.setAttribute('style','display:block');
+    }else{
+      renderData(result);
     }
+    
+    // 根據選取的地區值進行不同的處理
 })
 
 // 選取類別為 'addTicket-btn' 的按鈕元素
 const btn = document.querySelector('.addTicket-btn');
+const addTicketForm = document.querySelector('.addTicket-form');
 // 獲取 ID 為 'ticketName' 的套票名稱輸入框元素
 const ticketName = document.querySelector('#ticketName');
 // 獲取 ID 為 'ticketImgUrl' 的圖片網址輸入框元素
@@ -296,6 +159,7 @@ btn.addEventListener('click',function(){
 
     // 檢查是否有空的輸入
     if(!empty){
+        
         obj.id = data.length;
 
         //將套票名稱賦予到obj.name上
@@ -322,15 +186,61 @@ btn.addEventListener('click',function(){
         // 將新的物件添加到數據陣列中
         data.push(obj);
 
+        regionSearch.value = '全部'
         // 渲染數據，更新顯示的內容
-        renderData();
+        renderData(data);
+        chartUpdate(data);
         //清空表單
-        ticketName.value = '';
-        ticketImgUrl.value = '';
-        ticketRegion.value = '';
-        ticketDescription.value = '';
-        ticketNum.value = '';
-        ticketPrice.value = '';
-        ticketRate.value = '';
+        addTicketForm.reset();
     }
 })
+
+function chartDataUpdata(data){
+  let chartData = [];
+  data.forEach(ticket =>{
+    const existingArea = chartData.find(areas => areas.area === ticket.area);
+    
+    if (existingArea) {
+      // 如果已存在，增加計數
+      existingArea.count += 1;
+    } else {
+      // 如果不存在，新增該區域的物件
+      chartData.push({ area: ticket.area, count: 1 });
+    }
+  })
+  return chartData.map(areas => [areas.area, areas.count]);
+}
+
+let chart;
+function chartGenerate(data){
+  let chartData = chartDataUpdata(data);
+  let groups = chartData.map(areas => areas[0]);
+  chart = c3.generate({
+    bindto: '#chart', // HTML 元素綁定
+    data: {
+        columns: chartData,
+        type : 'donut',
+        // labels: false // 設為 false 以隱藏數據標籤
+    },
+    size: {
+      width: 200,
+      height:200
+    },
+    donut: {
+        title: "套票地區比重",
+        width: 15,
+        label: {
+          show: false // 隱藏百分比標籤
+      }
+    },
+    groups: [groups]
+  });
+}
+
+function chartUpdate(data){
+  let chartData = chartDataUpdata(data);
+  chart.unload(); // 卸載所有舊的數據
+  chart.load({
+      columns: chartData
+  });
+}
